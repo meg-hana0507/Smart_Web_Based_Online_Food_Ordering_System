@@ -50,9 +50,11 @@ class Migration(migrations.Migration):
                 ('email', models.EmailField(max_length=254, unique=True)),
                 ('password', models.CharField(max_length=100)),
                 ('role', models.CharField(choices=[('admin', 'Admin'), ('restaurant', 'Restaurant'), ('user', 'User')], max_length=20)),
+                ('image', models.ImageField(blank=True, null=True, upload_to='restaurant_images/')),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
             ],
         ),
+
         migrations.CreateModel(
             name='OrderItem',
             fields=[
