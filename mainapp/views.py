@@ -484,7 +484,20 @@ from .models import FoodItem
 #     })
 
 def recommended_foods(request):
-    return render(
-        request,
-        'user/recommended_foods.html'
-    )
+    if request.session.get('role') != 'user':
+        return redirect('user_login')
+
+    user_id = request.session.get('user_id')
+
+    try:
+        recommended_ids = get_recommendations(user_id)
+        if recommended_ids:
+            foods = FoodItem.objects.filter(id__in=recommended_ids, is_available=True)
+        else:
+            foods = FoodItem.objects.filter(is_available=True)[:6]
+    except Exception:
+        foods = FoodItem.objects.filter(is_available=True)[:6]
+
+    return render(request, 'user/recommended_foods.html', {
+        'foods': foods
+    })

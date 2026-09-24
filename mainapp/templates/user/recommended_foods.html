@@ -3,13 +3,34 @@
 {% block user_content %}
 
 <div class="container">
-    <h2 class="mb-4">🍽️ Recommended Foods</h2>
+    <h3 class="mb-4"><i class="fas fa-utensils"></i> Recommended Foods For You</h3>
 
-    <div class="bg-white rounded shadow-sm p-5 text-center">
+    <div class="row">
+    {% for food in foods %}
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm border-0 h-100 text-center p-3">
+            {% if food.image %}
+            <img src="{{ food.image.url }}" class="card-img-top rounded" style="height:180px; object-fit:cover;">
+            {% else %}
+            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80" class="card-img-top rounded" style="height:180px; object-fit:cover;">
+            {% endif %}
+            
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ food.name }}</h5>
+                <p class="text-muted mb-1"><small>By {{ food.restaurant.name }}</small></p>
+                <h6 class="text-primary mb-3">₹ {{ food.price }}</h6>
+                <a href="/add_to_cart/{{ food.id }}/" class="btn btn-primary mt-auto">
+                    <i class="fas fa-cart-plus"></i> Add to Cart
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 bg-white rounded shadow-sm p-5 text-center">
         <h4>No Recommendations Found 😢</h4>
-        <p class="text-muted">
-            Recommended foods will appear here when available.
-        </p>
+        <p class="text-muted">Recommended foods will appear here as menu items are added.</p>
+    </div>
+    {% endfor %}
     </div>
 </div>
 
