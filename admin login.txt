@@ -1,0 +1,9 @@
+from mainapp.models import User 
+
+admin_user = User.objects.create(
+    email='admin@gmail.com',
+    password='admin',
+    role='admin'
+)
+
+admin_user.save()
