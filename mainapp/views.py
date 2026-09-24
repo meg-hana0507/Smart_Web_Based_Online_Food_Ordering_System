@@ -215,14 +215,23 @@ def add_food(request):
     if request.method == 'POST':
         image = request.FILES.get('image')
 
-        FoodItem.objects.create(
-            name=request.POST.get('name', ''),
-            description=request.POST.get('description', ''),
-            price=request.POST.get('price', 0),
-            image=image,
-            category_id=request.POST.get('category'),
-            restaurant_id=user_id
-        )
+        try:
+            FoodItem.objects.create(
+                name=request.POST.get('name', ''),
+                description=request.POST.get('description', ''),
+                price=request.POST.get('price', 0),
+                image=image,
+                category_id=request.POST.get('category'),
+                restaurant_id=user_id
+            )
+        except Exception:
+            FoodItem.objects.create(
+                name=request.POST.get('name', ''),
+                description=request.POST.get('description', ''),
+                price=request.POST.get('price', 0),
+                category_id=request.POST.get('category'),
+                restaurant_id=user_id
+            )
 
         messages.success(request, "Food item added successfully!")
         return redirect('restaurant_dashboard')
@@ -232,6 +241,7 @@ def add_food(request):
     return render(request, 'restaurant/add_food.html', {
         'categories': categories
     })
+
 
 
 

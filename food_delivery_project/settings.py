@@ -16,6 +16,15 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+IS_VERCEL = bool(
+    os.environ.get('VERCEL') or 
+    os.environ.get('VERCEL_ENV') or 
+    os.environ.get('VERCEL_URL') or 
+    str(BASE_DIR).startswith('/var/task') or 
+    str(BASE_DIR).startswith('/tmp')
+)
+
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -86,13 +95,14 @@ except ImportError:
 
 if db_from_env:
     DATABASES = {'default': db_from_env}
-elif os.environ.get('VERCEL'):
+elif IS_VERCEL:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': os.path.join('/tmp', 'db.sqlite3'),
         }
     }
+
 else:
     try:
         import pymysql
@@ -163,9 +173,10 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
-if os.environ.get('VERCEL'):
+if IS_VERCEL:
     MEDIA_ROOT = os.path.join('/tmp', 'media')
 else:
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 
