@@ -27,6 +27,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-8nadyat5_+v=xm&7a*j+2
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
+CSRF_TRUSTED_ORIGINS = ['https://*.vercel.app', 'https://*.onrender.com']
+
 
 
 # Application definition
