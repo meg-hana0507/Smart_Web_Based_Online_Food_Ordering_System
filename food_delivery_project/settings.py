@@ -81,6 +81,13 @@ import dj_database_url
 db_from_env = dj_database_url.config(conn_max_age=600)
 if db_from_env:
     DATABASES = {'default': db_from_env}
+elif os.environ.get('VERCEL'):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join('/tmp', 'db.sqlite3'),
+        }
+    }
 else:
     try:
         import pymysql
@@ -97,6 +104,7 @@ else:
             'PORT': '3306',
         }
     }
+
 
 
 # Password validation
