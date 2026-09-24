@@ -86,17 +86,28 @@ def admin_dashboard(request):
 def add_restaurant(request):
 
     if request.method == 'POST':
+        image = request.FILES.get('image')
 
-        User.objects.create(
-            name=request.POST['name'],
-            email=request.POST['email'],
-            password=request.POST['password'],
-            role='restaurant'
-        )
+        try:
+            User.objects.create(
+                name=request.POST['name'],
+                email=request.POST['email'],
+                password=request.POST['password'],
+                role='restaurant',
+                image=image
+            )
+        except Exception:
+            User.objects.create(
+                name=request.POST['name'],
+                email=request.POST['email'],
+                password=request.POST['password'],
+                role='restaurant'
+            )
 
         return redirect('admin_dashboard')
 
     return render(request, 'admin/add_restaurant.html')
+
 
 
 def delete_restaurant(request, id):
