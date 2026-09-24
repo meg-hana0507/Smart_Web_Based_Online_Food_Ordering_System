@@ -213,15 +213,18 @@ def add_food(request):
     user_id = request.session.get('user_id')
 
     if request.method == 'POST':
+        image = request.FILES.get('image')
 
         FoodItem.objects.create(
-            name=request.POST['name'],
-            price=request.POST['price'],
-            image=request.FILES['image'],
-            category_id=request.POST['category'],
+            name=request.POST.get('name', ''),
+            description=request.POST.get('description', ''),
+            price=request.POST.get('price', 0),
+            image=image,
+            category_id=request.POST.get('category'),
             restaurant_id=user_id
         )
 
+        messages.success(request, "Food item added successfully!")
         return redirect('restaurant_dashboard')
 
     categories = Category.objects.filter(restaurant_id=user_id)
@@ -229,6 +232,7 @@ def add_food(request):
     return render(request, 'restaurant/add_food.html', {
         'categories': categories
     })
+
 
 
 def delete_food(request, id):
