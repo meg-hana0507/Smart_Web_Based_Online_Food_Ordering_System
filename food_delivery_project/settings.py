@@ -78,9 +78,12 @@ WSGI_APPLICATION = 'food_delivery_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-import dj_database_url
+try:
+    import dj_database_url
+    db_from_env = dj_database_url.config(conn_max_age=600)
+except ImportError:
+    db_from_env = None
 
-db_from_env = dj_database_url.config(conn_max_age=600)
 if db_from_env:
     DATABASES = {'default': db_from_env}
 elif os.environ.get('VERCEL'):
@@ -94,18 +97,24 @@ else:
     try:
         import pymysql
         pymysql.install_as_MySQLdb()
-    except Exception:
-        pass
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'food_delivery_db',
-            'USER': 'root',
-            'PASSWORD': 'root',
-            'HOST': 'localhost',
-            'PORT': '3306',
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.mysql',
+                'NAME': 'food_delivery_db',
+                'USER': 'root',
+                'PASSWORD': 'root',
+                'HOST': 'localhost',
+                'PORT': '3306',
+            }
         }
-    }
+    except Exception:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
+
 
 
 

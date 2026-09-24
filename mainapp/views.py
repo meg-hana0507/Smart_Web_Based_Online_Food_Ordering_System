@@ -305,6 +305,9 @@ def view_menu(request, id):
 
 
 def add_to_cart(request, id):
+    if 'user_id' not in request.session:
+        messages.error(request, "Please log in to add items to cart")
+        return redirect('user_login')
 
     Cart.objects.create(
         user_id=request.session['user_id'],
@@ -316,10 +319,11 @@ def add_to_cart(request, id):
 
 
 def view_cart(request):
+    if 'user_id' not in request.session:
+        return redirect('user_login')
 
     cart = Cart.objects.filter(user_id=request.session['user_id'])
-
-    total = cart.aggregate(total=Sum('food__price'))['total']
+    total = cart.aggregate(total=Sum('food__price'))['total'] or 0
 
     return render(request, 'user/cart.html', {
         'cart': cart,
@@ -328,15 +332,23 @@ def view_cart(request):
 
 
 def remove_from_cart(request, id):
+    if 'user_id' not in request.session:
+        return redirect('user_login')
 
-    Cart.objects.filter(id=id).delete()
+    Cart.objects.filter(id=id, user_id=request.session['user_id']).delete()
 
     return redirect('view_cart')
 
 
 def place_order(request):
+    if 'user_id' not in request.session:
+        return redirect('user_login')
 
     cart_items = Cart.objects.filter(user_id=request.session['user_id'])
+
+    if not cart_items.exists():
+        messages.error(request, "Your cart is empty.")
+        return redirect('browse_restaurants')
 
     total = sum(item.food.price for item in cart_items)
 
@@ -348,7 +360,6 @@ def place_order(request):
     )
 
     for item in cart_items:
-
         OrderItem.objects.create(
             order_id=order.id,
             food_id=item.food.id,
@@ -362,12 +373,15 @@ def place_order(request):
 
 
 def my_orders(request):
+    if 'user_id' not in request.session:
+        return redirect('user_login')
 
     orders = Order.objects.filter(user_id=request.session['user_id'])
 
     return render(request, 'user/my_orders.html', {
         'orders': orders
     })
+
 
 
 def cancel_order(request, id):
